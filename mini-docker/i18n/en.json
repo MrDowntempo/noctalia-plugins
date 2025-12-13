@@ -1,0 +1,21 @@
+{
+  "running_containers": "Running containers: %1",
+  "docker_not_available": "Docker not available",
+  "Containers": "Containers",
+  "Volumes": "Volumes",
+  "Refresh": "Refresh",
+  "Prune": "Prune",
+  "Stop": "Stop",
+  "Start": "Start",
+  "Remove": "Remove",
+  "Container Manager Settings": "Container Manager Settings",
+  "General": "General",
+  "Refresh Interval (ms)": "Refresh Interval (ms)",
+  "1 second": "1 second",
+  "5 seconds": "5 seconds",
+  "10 seconds": "10 seconds",
+  "30 seconds": "30 seconds",
+  "refreshinterval_label": "Refresh Interval",
+  "refreshinterval_description": "How often the plugin checks for container status changes",
+  "currentvalue": "Selected: {value} ms"
+}
