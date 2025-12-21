@@ -1,0 +1,24 @@
+{
+  "id": "fancy-audiovisualizer",
+  "name": "Fancy Audiovisualizer",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "3.7.2",
+  "author": "Noctalia",
+  "license": "MIT",
+  "description": "Fancy circular audio visualizer with reactive rings, inspired by GLava NCS",
+  "entryPoints": {
+    "desktopWidget": "DesktopWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "metadata": {
+    "defaultSettings": {
+      "sensitivity": 1.5,
+      "showRings": true,
+      "showBars": true,
+      "rotationSpeed": 0.5,
+      "barWidth": 0.6,
+      "ringOpacity": 0.8,
+      "bloomIntensity": 0.5
+    }
+  }
+}
