@@ -19,7 +19,7 @@ Item {
   property int settingsHeight: cfg.windowHeight ?? defaults.windowHeight ?? 0
   property bool autoHeight: cfg.autoHeight ?? defaults.autoHeight ?? true
   property int columnCount: cfg.columnCount ?? defaults.columnCount ?? 3
-  property string hyprlandConfigPath: cfg.hyprlandConfigPath || defaults.hyprlandConfigPath || "~/.config/hypr/keybind.conf"
+  property string hyprlandConfigPath: cfg.hyprlandConfigPath || defaults.hyprlandConfigPath || "~/.config/hypr/hyprland.conf"
   property string niriConfigPath: cfg.niriConfigPath || defaults.niriConfigPath || "~/.config/niri/config.kdl"
 
   property var rawCategories: pluginApi?.pluginSettings?.cheatsheetData || []

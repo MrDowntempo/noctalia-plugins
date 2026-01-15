@@ -22,7 +22,7 @@ ColumnLayout {
   property int windowHeight: cfg.windowHeight ?? defaults.windowHeight ?? 0
   property bool autoHeight: cfg.autoHeight ?? defaults.autoHeight ?? true
   property int columnCount: cfg.columnCount ?? defaults.columnCount ?? 3
-  property string hyprlandConfigPath: cfg.hyprlandConfigPath || defaults.hyprlandConfigPath || "~/.config/hypr/keybind.conf"
+  property string hyprlandConfigPath: cfg.hyprlandConfigPath || defaults.hyprlandConfigPath || "~/.config/hypr/hyprland.conf"
   property string niriConfigPath: cfg.niriConfigPath || defaults.niriConfigPath || "~/.config/niri/config.kdl"
 
   // Header
@@ -269,7 +269,7 @@ ColumnLayout {
           Layout.fillWidth: true
           Layout.preferredHeight: Style.baseWidgetSize
           text: hyprlandConfigPath
-          placeholderText: "~/.config/hypr/keybind.conf"
+          placeholderText: "~/.config/hypr/hyprland.conf"
 
           onTextChanged: {
             if (text.length > 0 && pluginApi && pluginApi.pluginSettings) {
@@ -389,7 +389,7 @@ ColumnLayout {
               pluginApi.pluginSettings.windowHeight = defaults.windowHeight || 0;
               pluginApi.pluginSettings.autoHeight = defaults.autoHeight ?? true;
               pluginApi.pluginSettings.columnCount = defaults.columnCount || 3;
-              pluginApi.pluginSettings.hyprlandConfigPath = defaults.hyprlandConfigPath || "~/.config/hypr/keybind.conf";
+              pluginApi.pluginSettings.hyprlandConfigPath = defaults.hyprlandConfigPath || "~/.config/hypr/hyprland.conf";
               pluginApi.pluginSettings.niriConfigPath = defaults.niriConfigPath || "~/.config/niri/config.kdl";
               pluginApi.pluginSettings.cheatsheetData = [];
               pluginApi.pluginSettings.detectedCompositor = "";
@@ -400,7 +400,7 @@ ColumnLayout {
               heightInput.text = "850";
               autoHeightToggle.checked = true;
               columnCombo.currentKey = "3";
-              hyprlandPathInput.text = defaults.hyprlandConfigPath || "~/.config/hypr/keybind.conf";
+              hyprlandPathInput.text = defaults.hyprlandConfigPath || "~/.config/hypr/hyprland.conf";
               niriPathInput.text = defaults.niriConfigPath || "~/.config/niri/config.kdl";
 
               ToastService.showNotice(
