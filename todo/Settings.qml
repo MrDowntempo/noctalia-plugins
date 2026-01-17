@@ -10,10 +10,9 @@ ColumnLayout {
   property var pluginApi: null
 
   property bool valueShowCompleted: pluginApi?.pluginSettings?.showCompleted !== undefined ? pluginApi.pluginSettings.showCompleted : pluginApi?.manifest?.metadata?.defaultSettings?.showCompleted
-
   property bool valueShowBackground: pluginApi?.pluginSettings?.showBackground !== undefined ? pluginApi.pluginSettings.showBackground : pluginApi?.manifest?.metadata?.defaultSettings?.showBackground
 
-  spacing: Style.marginL  // Increased spacing to make the panel slightly larger
+  spacing: Style.marginL
 
   Component.onCompleted: {
     Logger.i("Todo", "Settings UI loaded");
@@ -69,10 +68,10 @@ ColumnLayout {
       }
     }
 
-    // List of existing pages with manual scroll support
+    // List of existing pages with proper scrolling
     Item {
       Layout.fillWidth: true
-      height: Math.min(pagesListView.contentHeight, 200)  // Limit height with scrollbar if needed
+      height: 200
 
       Flickable {
         id: pagesListView
@@ -80,6 +79,14 @@ ColumnLayout {
         contentHeight: contentColumn.height
         clip: true
         boundsBehavior: Flickable.DragOverBounds
+
+        ScrollBar.vertical: ScrollBar {
+          parent: pagesListView
+          anchors.top: pagesListView.top
+          anchors.right: pagesListView.right
+          anchors.bottom: pagesListView.bottom
+          policy: ScrollBar.AsNeeded
+        }
 
         ColumnLayout {
           id: contentColumn
@@ -93,7 +100,6 @@ ColumnLayout {
               width: parent.width
               height: Style.baseWidgetSize
 
-              // Properties to track if this item is being edited
               property bool editing: false
               property string originalName: modelData.name || ""
 
@@ -101,20 +107,17 @@ ColumnLayout {
               function saveRename() {
                 var newName = renameInput.text.trim();
                 if (newName === "") {
-                  // Don't save empty names, just exit editing mode
                   editing = false;
                   return;
                 }
 
                 if (newName === originalName) {
-                  // Name hasn't changed, just exit editing mode
                   editing = false;
                   return;
                 }
 
                 if (!isPageNameUnique(newName, index)) {
                   ToastService.showError(pluginApi?.tr("settings.pages.name_exists") || "Page name already exists");
-                  // Don't exit editing mode to allow user to fix the name
                   return;
                 }
 
@@ -124,14 +127,12 @@ ColumnLayout {
                 pluginApi.pluginSettings.pages = pages;
                 pluginApi.saveSettings();
 
-                // Update the originalName to the new value for future edits
                 originalName = newName;
                 editing = false;
               }
 
               // Function to cancel renaming
               function cancelRename() {
-                // Restore the original text when cancelling
                 if (renameInput) {
                   renameInput.text = originalName;
                 }
@@ -148,7 +149,7 @@ ColumnLayout {
                 Item {
                   Layout.fillHeight: true
                   Layout.fillWidth: true
-                  visible: !editing  // Use local property instead of parent
+                  visible: !editing
 
                   RowLayout {
                     anchors.fill: parent
@@ -165,7 +166,7 @@ ColumnLayout {
                       tooltipText: pluginApi?.tr("settings.pages.rename_button_tooltip") || "Rename"
                       onClicked: {
                         // Switch to editing mode and capture the current name
-                        originalName = modelData.name; // Capture the current name before editing
+                        originalName = modelData.name;
                         editing = true;
                       }
                     }
@@ -174,11 +175,11 @@ ColumnLayout {
                       icon: "trash"
                       tooltipText: pluginApi?.tr("settings.pages.delete_button_tooltip") || "Delete"
                       colorFg: Color.mError
-                      enabled: (pluginApi?.pluginSettings?.pages?.length || 0) > 1  // Don't allow deleting the last page
+                      enabled: (pluginApi?.pluginSettings?.pages?.length || 0) > 1
                       onClicked: {
                         if ((pluginApi?.pluginSettings?.pages?.length || 0) <= 1) {
                           ToastService.showError(pluginApi?.tr("settings.pages.cannot_delete_last") || "Cannot delete the last page");
-                          return; // This will now properly exit the entire onClicked function
+                          return;
                         }
 
                         // Show confirmation dialog before deleting
@@ -193,19 +194,18 @@ ColumnLayout {
                   Layout.fillHeight: true
                   Layout.fillWidth: true
                   spacing: Style.marginS
-                  visible: editing  // Use local property instead of parent
+                  visible: editing
 
                   NTextInput {
                     id: renameInput
-                    text: originalName  // Use local property instead of parent
+                    text: originalName
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 150  // Set a minimum width for better UX
-                    focus: editing  // Focus when editing starts
+                    Layout.preferredWidth: 150
+                    focus: editing
 
                     Keys.onReturnPressed: saveRename()
                     Keys.onEscapePressed: cancelRename()
 
-                    // Auto-focus when visible and update text when entering edit mode
                     onVisibleChanged: {
                       if (visible && editing) {
                         text = originalName;
@@ -242,7 +242,7 @@ ColumnLayout {
   function getNextPageId() {
     var pages = pluginApi?.pluginSettings?.pages || [];
     if (pages.length === 0) {
-      return 0;  // For empty array, return 0
+      return 0;
     }
 
     var maxId = -1;
@@ -265,12 +265,6 @@ ColumnLayout {
     return true;
   }
 
-  function promptForPageName(title, message, defaultValue) {
-    // In a real implementation, you would use a proper dialog
-    // For now, we'll return a fixed value to avoid runtime errors
-    // In a real app, you'd want to create a proper dialog component
-    return defaultValue + "_renamed"; // Placeholder implementation
-  }
 
   function addPage() {
     var name = newPageInput.text.trim();
@@ -345,7 +339,6 @@ ColumnLayout {
           textColor: Color.mOnError
           backgroundColor: Color.mError
           onClicked: {
-            // Perform actual deletion
             performPageDeletion(confirmDialog.pageIndex);
             confirmDialog.close();
           }
@@ -368,7 +361,7 @@ ColumnLayout {
   // Function to perform the actual page deletion
   function performPageDeletion(pageIdx) {
     if (pageIdx < 0)
-      return; // Invalid index
+      return;
 
     var pages = pluginApi.pluginSettings.pages || [];
     if (pages.length <= 1) {
@@ -412,7 +405,7 @@ ColumnLayout {
     }
 
     pluginApi.pluginSettings.pages = pages;
-    pluginApi.pluginSettings.todos = todos; // Update todos with transferred items
+    pluginApi.pluginSettings.todos = todos;
     pluginApi.saveSettings();
   }
 
