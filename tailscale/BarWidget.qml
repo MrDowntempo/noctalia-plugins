@@ -81,6 +81,14 @@ Rectangle {
 
     model: [
       {
+        "label": mainInstance?.tailscaleRunning 
+          ? (pluginApi?.tr("context.disconnect") || "Disconnect")
+          : (pluginApi?.tr("context.connect") || "Connect"),
+        "action": "toggle-tailscale",
+        "icon": mainInstance?.tailscaleRunning ? "plug-x" : "plug",
+        "enabled": mainInstance?.tailscaleInstalled
+      },
+      {
         "label": pluginApi?.tr("actions.widget-settings") || "Widget Settings",
         "action": "widget-settings",
         "icon": "settings"
@@ -95,6 +103,10 @@ Rectangle {
 
       if (action === "widget-settings") {
         BarService.openPluginSettings(screen, pluginApi.manifest)
+      } else if (action === "toggle-tailscale") {
+        if (mainInstance) {
+          mainInstance.toggleTailscale()
+        }
       }
     }
   }
