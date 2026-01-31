@@ -31,6 +31,17 @@
       "clear_completed_button": "Clear Completed",
       "title": "Todo List"
     },
+    "todo_details": {
+      "title": "Todo Details",
+      "label_title": "Title: ",
+      "label_status": "Status: ",
+      "status_completed": "Completed",
+      "status_pending": "Pending",
+      "label_created": "Created: ",
+      "label_priority": "Priority: ",
+      "label_page_id": "Page ID: ",
+      "button_close": "Close"
+    },
     "todo_item": {
       "delete_button_tooltip": "Delete",
       "edit_button_tooltip": "Edit"

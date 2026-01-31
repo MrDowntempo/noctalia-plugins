@@ -66,7 +66,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         text: {
           var textKey = activeCount === 1 ? "bar_widget.todo_count_singular" : "bar_widget.todo_count_plural";
-          var text = pluginApi?.tr(textKey) || (activeCount === 1 ? "{count} todo" : "{count} todos");
+          var text = pluginApi?.tr(textKey);
           return text.replace("{count}", activeCount);
         }
         color: root.contentColor

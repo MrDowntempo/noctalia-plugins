@@ -48,8 +48,8 @@ ColumnLayout {
   // Toggle for custom priority colors
   NToggle {
     Layout.fillWidth: true
-    label: pluginApi?.tr("settings.custom_priority_colors.label") || "Use Custom Priority Colors"
-    description: pluginApi?.tr("settings.custom_priority_colors.description") || "Enable to customize priority colors"
+    label: pluginApi?.tr("settings.custom_priority_colors.label")
+    description: pluginApi?.tr("settings.custom_priority_colors.description")
     checked: root.valueUseCustomColors
     onToggled: function (checked) {
       root.valueUseCustomColors = checked;
@@ -63,7 +63,7 @@ ColumnLayout {
     visible: root.valueUseCustomColors
 
     NText {
-      text: pluginApi?.tr("settings.priority_colors.label") || "Priority Colors"
+      text: pluginApi?.tr("settings.priority_colors.label")
       font.pointSize: Style.fontSizeL
       font.weight: Font.Bold
       Layout.topMargin: Style.marginL
@@ -77,7 +77,7 @@ ColumnLayout {
 
       // High priority color
       NText {
-        text: pluginApi?.tr("settings.priority_colors.high_label") || "High Priority:"
+        text: pluginApi?.tr("settings.priority_colors.high_label")
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
       }
 
@@ -93,7 +93,7 @@ ColumnLayout {
 
       // Medium priority color
       NText {
-        text: pluginApi?.tr("settings.priority_colors.medium_label") || "Medium Priority:"
+        text: pluginApi?.tr("settings.priority_colors.medium_label")
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
       }
 
@@ -109,7 +109,7 @@ ColumnLayout {
 
       // Low priority color
       NText {
-        text: pluginApi?.tr("settings.priority_colors.low_label") || "Low Priority:"
+        text: pluginApi?.tr("settings.priority_colors.low_label")
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
       }
 
@@ -131,7 +131,7 @@ ColumnLayout {
     spacing: Style.marginS
 
     NText {
-      text: pluginApi?.tr("settings.pages.label") || "Manage Pages"
+      text: pluginApi?.tr("settings.pages.label")
       font.pointSize: Style.fontSizeL
       font.weight: Font.Bold
       Layout.topMargin: Style.marginL
@@ -144,13 +144,13 @@ ColumnLayout {
 
       NTextInput {
         id: newPageInput
-        placeholderText: pluginApi?.tr("settings.pages.placeholder") || "Enter new page name"
+        placeholderText: pluginApi?.tr("settings.pages.placeholder")
         Layout.fillWidth: true
         Keys.onReturnPressed: addPage()
       }
 
       NButton {
-        text: pluginApi?.tr("settings.pages.add_button") || "Add Page"
+        text: pluginApi?.tr("settings.pages.add_button")
         onClicked: addPage()
       }
     }
@@ -204,7 +204,7 @@ ColumnLayout {
                 }
 
                 if (!isPageNameUnique(newName, index)) {
-                  ToastService.showError(pluginApi?.tr("settings.pages.name_exists") || "Page name already exists");
+                  ToastService.showError(pluginApi?.tr("settings.pages.name_exists"));
                   return;
                 }
 
@@ -250,7 +250,7 @@ ColumnLayout {
 
                     NIconButton {
                       icon: "pencil"
-                      tooltipText: pluginApi?.tr("settings.pages.rename_button_tooltip") || "Rename"
+                      tooltipText: pluginApi?.tr("settings.pages.rename_button_tooltip")
                       onClicked: {
                         // Switch to editing mode and capture the current name
                         originalName = modelData.name;
@@ -260,12 +260,12 @@ ColumnLayout {
 
                     NIconButton {
                       icon: "trash"
-                      tooltipText: pluginApi?.tr("settings.pages.delete_button_tooltip") || "Delete"
+                      tooltipText: pluginApi?.tr("settings.pages.delete_button_tooltip")
                       colorFg: Color.mError
                       enabled: (pluginApi?.pluginSettings?.pages?.length || 0) > 1
                       onClicked: {
                         if ((pluginApi?.pluginSettings?.pages?.length || 0) <= 1) {
-                          ToastService.showError(pluginApi?.tr("settings.pages.cannot_delete_last") || "Cannot delete the last page");
+                          ToastService.showError(pluginApi?.tr("settings.pages.cannot_delete_last"));
                           return;
                         }
 
@@ -357,12 +357,12 @@ ColumnLayout {
     var name = newPageInput.text.trim();
 
     if (name === "") {
-      ToastService.showError(pluginApi?.tr("settings.pages.empty_name") || "Page name cannot be empty");
+      ToastService.showError(pluginApi?.tr("settings.pages.empty_name"));
       return;
     }
 
     if (!isPageNameUnique(name, -1)) {
-      ToastService.showError(pluginApi?.tr("settings.pages.name_exists") || "Page name already exists");
+      ToastService.showError(pluginApi?.tr("settings.pages.name_exists"));
       return;
     }
 
@@ -440,7 +440,7 @@ ColumnLayout {
   // Function to show the confirmation dialog
   function showDeleteConfirmation(pageIdx, pageName) {
     confirmDialog.pageIndex = pageIdx;
-    var confirmMessage = pluginApi?.tr("settings.pages.confirm_delete_message") || "Are you sure you want to delete page '{pageName}'?\n\nAll todos in this page will be transferred to the first page.";
+    var confirmMessage = pluginApi?.tr("settings.pages.confirm_delete_message");
     confirmText.text = confirmMessage.replace("{pageName}", pageName);
     confirmDialog.open();
   }
@@ -452,7 +452,7 @@ ColumnLayout {
 
     var pages = pluginApi.pluginSettings.pages || [];
     if (pages.length <= 1) {
-      ToastService.showError(pluginApi?.tr("settings.pages.cannot_delete_last") || "Cannot delete the last page");
+      ToastService.showError(pluginApi?.tr("settings.pages.cannot_delete_last"));
       return;
     }
 
