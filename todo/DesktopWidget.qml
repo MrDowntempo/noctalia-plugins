@@ -300,7 +300,8 @@ DraggableDesktopWidget {
                         width: scaledBaseWidgetSize * 0.5
                         height: scaledBaseWidgetSize * 0.5
                         radius: Style.iRadiusXXS
-                        color: showBackground ? (model.completed ? Color.mPrimary : Color.mSurface) : "transparent"
+                        color: Color.mSurface
+                        opacity: showBackground ? 1.0 : 0.5
                         border.color: Color.mOutline
                         border.width: Style.borderS
                         anchors.centerIn: parent
@@ -310,11 +311,10 @@ DraggableDesktopWidget {
                           anchors.centerIn: parent
                           anchors.horizontalCenterOffset: 0
                           icon: "check"
-                          color: showBackground ? Color.mOnPrimary : Color.mPrimary
+                          color: Color.mPrimary
                           pointSize: Math.max(Style.fontSizeXS, width * 0.5)
                         }
 
-                        // MouseArea for the checkbox
                         MouseArea {
                           anchors.fill: parent
                           hoverEnabled: false
@@ -329,7 +329,7 @@ DraggableDesktopWidget {
                     // Priority indicator - a colored vertical line
                     Rectangle {
                       id: priorityIndicator
-                      width: 3  // Width of the priority line
+                      width: 3
                       height: parent.height - scaledMarginS
                       anchors.left: parent.left
                       anchors.leftMargin: scaledMarginM
@@ -341,7 +341,6 @@ DraggableDesktopWidget {
                         if (pluginApi) {
                           return getPriorityColor(model.priority || "medium");
                         } else {
-                          // Fallback to default colors if pluginApi is not ready
                           var priority = model.priority || "medium";
                           if (priority === "high") {
                             return Color.mError;
@@ -354,7 +353,6 @@ DraggableDesktopWidget {
                       }
                     }
 
-                    // Text for the todo item
                     NText {
                       text: model.text
                       color: model.completed ? Color.mOnSurfaceVariant : Color.mOnSurface
@@ -399,16 +397,10 @@ DraggableDesktopWidget {
     var todos = pluginApi.pluginSettings.todos || [];
     for (var i = 0; i < todos.length; i++) {
       if (todos[i].id === todoId) {
-        // Preserve all existing properties, only update specified fields
-        todos[i] = {
-          id: todos[i].id,
-          text: updates.text !== undefined ? updates.text : todos[i].text,
-          completed: updates.completed !== undefined ? updates.completed : todos[i].completed,
-          createdAt: todos[i].createdAt,
-          pageId: todos[i].pageId || 0,
-          priority: updates.priority !== undefined ? updates.priority : (todos[i].priority || "medium"),
-          details: updates.details !== undefined ? updates.details : (todos[i].details || "")
-        };
+        if (updates.text !== undefined) todos[i].text = updates.text;
+        if (updates.completed !== undefined) todos[i].completed = updates.completed;
+        if (updates.priority !== undefined) todos[i].priority = updates.priority;
+        if (updates.details !== undefined) todos[i].details = updates.details;
         return true;
       }
     }
@@ -422,14 +414,11 @@ DraggableDesktopWidget {
       return false;
     }
 
-    // Use the existing updateTodo function to update only the completion status
     var success = updateTodo(todoId, {
       completed: !currentCompletedStatus
     });
 
     if (success) {
-      pluginApi.pluginSettings.todos = pluginApi.pluginSettings.todos;
-
       var completedCount = calculateCompletedCount();
       pluginApi.pluginSettings.completedCount = completedCount;
 
@@ -471,108 +460,68 @@ DraggableDesktopWidget {
       }
     }
 
-    if (todoIndex !== -1) {
-      var movedTodo = todos[todoIndex];
+    if (todoIndex === -1) return;
 
-      todos.splice(todoIndex, 1);
+    var movedTodo = todos[todoIndex];
 
-      // Only reorder within the same page
-      if (movedTodo.pageId === currentPageId) {
-        if (movedTodo.completed) {
-          // Place completed items at the end of the page
-          var insertIndex = todos.length;
-          for (var j = todos.length - 1; j >= 0; j--) {
-            if (todos[j].pageId === currentPageId && todos[j].completed) {
-              insertIndex = j + 1;
-              break;
-            }
-          }
-          todos.splice(insertIndex, 0, movedTodo);
-        } else {
-          // Place uncompleted items at the beginning of the page
-          var insertIndex = 0;
-          for (; insertIndex < todos.length; insertIndex++) {
-            if (todos[insertIndex].pageId === currentPageId) {
-              if (todos[insertIndex].completed) {
-                break;
-              }
-            }
-          }
-          todos.splice(insertIndex, 0, movedTodo);
+    // Only reorder if todo belongs to current page
+    if (movedTodo.pageId !== currentPageId) return;
+
+    todos.splice(todoIndex, 1);
+
+    if (movedTodo.completed) {
+      // Place completed items at the end of the page
+      var insertIndex = todos.length;
+      for (var j = todos.length - 1; j >= 0; j--) {
+        if (todos[j].pageId === currentPageId && todos[j].completed) {
+          insertIndex = j + 1;
+          break;
         }
-      } else {
-        // If the todo is not on the current page, just add it back to its original position
-        todos.splice(todoIndex, 0, movedTodo);
       }
-
-      pluginApi.pluginSettings.todos = todos;
-      pluginApi.saveSettings();
+      todos.splice(insertIndex, 0, movedTodo);
+    } else {
+      // Place uncompleted items at the beginning of the page
+      var insertIndex = 0;
+      for (; insertIndex < todos.length; insertIndex++) {
+        if (todos[insertIndex].pageId === currentPageId) {
+          if (todos[insertIndex].completed) break;
+        }
+      }
+      todos.splice(insertIndex, 0, movedTodo);
     }
+
+    pluginApi.saveSettings();
   }
 
   // Helper function to get priority color
   function getPriorityColor(priority) {
-    // Ensure priority is a valid string
-    if (!priority || typeof priority !== 'string') {
-      priority = "medium";
-    }
-
-    // Validate priority value
+    // Validate priority
     var validPriorities = ["high", "medium", "low"];
-    if (validPriorities.indexOf(priority) === -1) {
+    if (!priority || validPriorities.indexOf(priority) === -1) {
       priority = "medium";
     }
 
-    // Simplified implementation using helper functions
     if (!pluginApi) {
-      return getDefaultColor(priority);
-    }
-
-    var useCustomColors = pluginApi?.pluginSettings?.useCustomColors;
-    if (!useCustomColors) {
+      // Fallback to theme colors when pluginApi not available
       return getThemeColor(priority);
     }
 
-    return getCustomColor(priority);
-  }
-
-  // Helper function to get default color when pluginApi is not available
-  function getDefaultColor(priority) {
-    if (priority === "high") {
-      return Color.mError;
-    } else if (priority === "low") {
-      return Color.mOnSurfaceVariant;
-    } else {
-      return Color.mPrimary;
+    var useCustomColors = pluginApi?.pluginSettings?.useCustomColors;
+    if (useCustomColors) {
+      var customColors = pluginApi?.pluginSettings?.priorityColors;
+      if (customColors && customColors[priority]) {
+        return customColors[priority];
+      }
     }
+
+    return getThemeColor(priority);
   }
 
-  // Helper function to get theme color when custom colors are disabled
+  // Helper function to get theme color
   function getThemeColor(priority) {
-    if (priority === "high") {
-      return Color.mError;
-    } else if (priority === "low") {
-      return Color.mOnSurfaceVariant;
-    } else {
-      return Color.mPrimary;
-    }
-  }
-
-  // Helper function to get custom color when custom colors are enabled
-  function getCustomColor(priority) {
-    var priorityColors = pluginApi?.pluginSettings?.priorityColors || {
-      "high": Color.mError,
-      "medium": Color.mPrimary,
-      "low": Color.mOnSurfaceVariant
-    };
-
-    if (priority === "high") {
-      return priorityColors.high || Color.mError;
-    } else if (priority === "low") {
-      return priorityColors.low || Color.mOnSurfaceVariant;
-    } else {
-      return priorityColors.medium || Color.mPrimary;
-    }
+    if (priority === "high") return Color.mError;
+    if (priority === "low") return Color.mOnSurfaceVariant;
+    return Color.mPrimary;
   }
 
 
@@ -598,8 +547,8 @@ DraggableDesktopWidget {
             text: todo.text,
             completed: todo.completed,
             pageId: todo.pageId || 0,
-            priority: todo.priority || "medium",
-            details: todo.details || ""
+            priority: todo.priority,
+            details: todo.details
           });
         }
       }

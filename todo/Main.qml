@@ -200,16 +200,10 @@ Item {
     var todos = pluginApi.pluginSettings.todos || [];
     for (var i = 0; i < todos.length; i++) {
       if (todos[i].id.toString() === String(todoId)) {
-        // Preserve all existing properties, only update specified fields
-        todos[i] = {
-          id: todos[i].id,
-          text: updates.text !== undefined ? updates.text : todos[i].text,
-          completed: updates.completed !== undefined ? updates.completed : todos[i].completed,
-          createdAt: todos[i].createdAt,
-          pageId: todos[i].pageId || 0,
-          priority: updates.priority !== undefined ? updates.priority : (todos[i].priority || "medium"),
-          details: updates.details !== undefined ? updates.details : (todos[i].details || "")
-        };
+        if (updates.text !== undefined) todos[i].text = updates.text;
+        if (updates.completed !== undefined) todos[i].completed = updates.completed;
+        if (updates.priority !== undefined) todos[i].priority = updates.priority;
+        if (updates.details !== undefined) todos[i].details = updates.details;
         return true;
       }
     }

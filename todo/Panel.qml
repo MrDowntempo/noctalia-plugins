@@ -898,33 +898,24 @@ Item {
 
 
   function addTodo() {
-    if (newTodoInput.text.trim() !== "") {
-      if (pluginApi) {
-        var todos = pluginApi.pluginSettings.todos || [];
-        var currentPageId = pluginApi.pluginSettings.current_page_id || 0;
-        var selectedPriority = priorityGroup.currentPriority || "medium";
+    var text = newTodoInput.text.trim();
+    if (!text || !pluginApi) return;
 
-        var newTodo = {
-          id: Date.now(),
-          text: newTodoInput.text.trim(),
-          completed: false,
-          createdAt: new Date().toISOString(),
-          pageId: currentPageId,
-          priority: selectedPriority,
-          details: ""
-        };
+    var todos = pluginApi.pluginSettings.todos || [];
+    var currentPageId = pluginApi.pluginSettings.current_page_id || 0;
 
-        todos.unshift(newTodo);
+    todos.unshift({
+      id: Date.now(),
+      text: text,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      pageId: currentPageId,
+      priority: priorityGroup.currentPriority,
+      details: ""
+    });
 
-        pluginApi.pluginSettings.todos = todos;
-
-        pluginApi.pluginSettings.count = todos.length;
-
-        pluginApi.saveSettings();
-
-        newTodoInput.text = "";
-      }
-    }
+    pluginApi.saveSettings();
+    newTodoInput.text = "";
   }
 
   function moveTodoItem(fromIndex, toIndex) {
@@ -1030,16 +1021,10 @@ Item {
     var todos = pluginApi.pluginSettings.todos || [];
     for (var i = 0; i < todos.length; i++) {
       if (todos[i].id === todoId) {
-        // Preserve all existing properties, only update specified fields
-        todos[i] = {
-          id: todos[i].id,
-          text: updates.text !== undefined ? updates.text : todos[i].text,
-          completed: updates.completed !== undefined ? updates.completed : todos[i].completed,
-          createdAt: todos[i].createdAt,
-          pageId: todos[i].pageId || 0,
-          priority: updates.priority !== undefined ? updates.priority : (todos[i].priority || "medium"),
-          details: updates.details !== undefined ? updates.details : (todos[i].details || "")
-        };
+        if (updates.text !== undefined) todos[i].text = updates.text;
+        if (updates.completed !== undefined) todos[i].completed = updates.completed;
+        if (updates.priority !== undefined) todos[i].priority = updates.priority;
+        if (updates.details !== undefined) todos[i].details = updates.details;
         return true;
       }
     }
@@ -1174,132 +1159,87 @@ Item {
     var todos = pluginApi.pluginSettings.todos || [];
     var currentPageId = pluginApi?.pluginSettings?.current_page_id || 0;
 
-    // Find the todo to move
-    var todoToMove = null;
-    var todoGlobalIndex = -1;
-
+    var todoIndex = -1;
     for (var i = 0; i < todos.length; i++) {
       if (todos[i].id === todoId) {
-        todoToMove = todos[i];
-        todoGlobalIndex = i;
+        todoIndex = i;
         break;
       }
     }
 
-    if (todoToMove && todoGlobalIndex !== -1) {
-      // Remove the todo from its current position
-      todos.splice(todoGlobalIndex, 1);
+    if (todoIndex === -1) return;
 
-      // Only reorder within the same page
-      if (todoToMove.pageId === currentPageId) {
-        // Find the correct position within the same page
-        if (todoToMove.completed) {
-          // Place completed items at the end of the page
-          var insertIndex = todos.length;
-          for (var j = todos.length - 1; j >= 0; j--) {
-            if (todos[j].pageId === currentPageId && todos[j].completed) {
-              insertIndex = j + 1;
-              break;
-            }
-          }
-          todos.splice(insertIndex, 0, todoToMove);
-        } else {
-          // Place uncompleted items at the beginning of the page
-          var insertIndex = 0;
-          for (; insertIndex < todos.length; insertIndex++) {
-            if (todos[insertIndex].pageId === currentPageId) {
-              if (todos[insertIndex].completed) {
-                break;
-              }
-            }
-          }
-          todos.splice(insertIndex, 0, todoToMove);
+    var movedTodo = todos[todoIndex];
+
+    // Only reorder if todo belongs to current page
+    if (movedTodo.pageId !== currentPageId) return;
+
+    todos.splice(todoIndex, 1);
+
+    if (movedTodo.completed) {
+      // Place completed items at the end of the page
+      var insertIndex = todos.length;
+      for (var j = todos.length - 1; j >= 0; j--) {
+        if (todos[j].pageId === currentPageId && todos[j].completed) {
+          insertIndex = j + 1;
+          break;
         }
-      } else {
-        // If the todo is not on the current page, just add it back to its original position
-        todos.splice(todoGlobalIndex, 0, todoToMove);
       }
-
-      pluginApi.pluginSettings.todos = todos;
-      pluginApi.saveSettings();
+      todos.splice(insertIndex, 0, movedTodo);
+    } else {
+      // Place uncompleted items at the beginning of the page
+      var insertIndex = 0;
+      for (; insertIndex < todos.length; insertIndex++) {
+        if (todos[insertIndex].pageId === currentPageId) {
+          if (todos[insertIndex].completed) break;
+        }
+      }
+      todos.splice(insertIndex, 0, movedTodo);
     }
+
+    pluginApi.saveSettings();
   }
 
   // Helper function to get priority color
   function getPriorityColor(priority) {
-    // Ensure priority is a valid string
-    if (!priority || typeof priority !== 'string') {
+    // Validate priority
+    var validPriorities = ["high", "medium", "low"];
+    if (!priority || validPriorities.indexOf(priority) === -1) {
       priority = "medium";
     }
 
-    // Validate priority value
-    var validPriorities = ["high", "medium", "low"];
-    if (validPriorities.indexOf(priority) === -1) {
-      priority = "medium"; // Default to medium if invalid
-    }
-
-    // Simplified implementation using helper functions
     if (!pluginApi) {
-      return getDefaultColor(priority);
-    }
-
-    var useCustomColors = pluginApi?.pluginSettings?.useCustomColors;
-    if (!useCustomColors) {
       return getThemeColor(priority);
     }
 
-    return getCustomColor(priority);
-  }
-
-  // Helper function to get default color when pluginApi is not available
-  function getDefaultColor(priority) {
-    if (priority === "high") {
-      return Color.mError;
-    } else if (priority === "low") {
-      return Color.mOnSurfaceVariant;
-    } else {
-      return Color.mPrimary;
+    var useCustomColors = pluginApi?.pluginSettings?.useCustomColors;
+    if (useCustomColors) {
+      var customColors = pluginApi?.pluginSettings?.priorityColors;
+      if (customColors && customColors[priority]) {
+        return customColors[priority];
+      }
     }
+
+    return getThemeColor(priority);
   }
 
-  // Helper function to get theme color when custom colors are disabled
+  // Helper function to get theme color
   function getThemeColor(priority) {
-    if (priority === "high") {
-      return Color.mError;
-    } else if (priority === "low") {
-      return Color.mOnSurfaceVariant;
-    } else {
-      return Color.mPrimary;
-    }
+    if (priority === "high") return Color.mError;
+    if (priority === "low") return Color.mOnSurfaceVariant;
+    return Color.mPrimary;
   }
 
-  // Helper function to get custom color when custom colors are enabled
-  function getCustomColor(priority) {
-    var priorityColors = pluginApi?.pluginSettings?.priorityColors || {
-      "high": Color.mError,
-      "medium": Color.mPrimary,
-      "low": Color.mOnSurfaceVariant
-    };
-
-    if (priority === "high") {
-      return priorityColors.high || Color.mError;
-    } else if (priority === "low") {
-      return priorityColors.low || Color.mOnSurfaceVariant;
-    } else {
-      return priorityColors.medium || Color.mPrimary;
+  // Helper function to get page name by ID
+  function getPageName(pageId) {
+    var pages = pluginApi?.pluginSettings?.pages || [];
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].id === pageId) {
+        return pages[i].name;
+      }
     }
-   }
-
-   // Helper function to get page name by ID
-   function getPageName(pageId) {
-     var pages = pluginApi?.pluginSettings?.pages || [];
-     for (var i = 0; i < pages.length; i++) {
-       if (pages[i].id === pageId) {
-         return pages[i].name;
-       }
-     }
-     return "Unknown";
-   }
+    return "Unknown";
+  }
 
    // Function to open the detailed view for a todo item
   function openTodoDetails(todo) {
@@ -1338,8 +1278,8 @@ Item {
           completed: todo.completed === true,
           createdAt: todo.createdAt,
           pageId: todo.pageId,
-          priority: todo.priority || "medium",
-          details: todo.details || ""
+          priority: todo.priority,
+          details: todo.details
         };
 
         // Add to main model
