@@ -330,6 +330,21 @@
       "lastUpdated": "2026-01-26T23:59:29-05:00"
     },
     {
+      "id": "niri-overview-launcher",
+      "name": "Niri Overview Launcher",
+      "version": "1.0.0",
+      "official": false,
+      "author": "eliahreeves",
+      "description": "Opens the launcher when typing in niri's overview mode",
+      "repository": "https://github.com/noctalia-dev/noctalia-plugins",
+      "minNoctaliaVersion": "4.1.2",
+      "license": "MIT",
+      "tags": [
+        "System"
+      ],
+      "lastUpdated": "2026-02-05T11:41:54-08:00"
+    },
+    {
       "id": "noctalia-supergfxctl",
       "name": "SuperGFX Control",
       "version": "0.0.3",
