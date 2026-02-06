@@ -1,0 +1,160 @@
+import Qt.labs.folderlistmodel
+import QtQuick
+import Quickshell
+import Quickshell.Io
+
+import qs.Commons
+import qs.Services.UI
+
+Item {
+    id: root
+    required property var pluginApi
+
+    /***************************
+    * PROPERTIES
+    ***************************/
+    required property bool active 
+    required property string currentWallpaper 
+    required property bool isPlaying
+    required property bool isMuted
+    required property string mpvSocket
+    required property real volume
+
+    required property Thumbnails thumbnails
+    required property InnerService innerService
+
+
+    /***************************
+    * FUNCTIONS
+    ***************************/
+    function activateMpvpaper() {
+        Logger.d("mpvpaper", "Activating mpvpaper...");
+
+        // Save the old wallpapers of the user.
+        innerService.saveOldWallpapers();
+
+        mpvProc.command = ["sh", "-c", `mpvpaper -o "input-ipc-server=${root.mpvSocket} loop ${isMuted ? "no-audio" : ""}" ALL ${root.currentWallpaper}` ]
+        mpvProc.running = true;
+
+        pluginApi.pluginSettings.isPlaying = true;
+        pluginApi.saveSettings();
+    }
+
+    function deactivateMpvpaper() {
+        Logger.d("mpvpaper", "Deactivating mpvpaper...");
+
+        // Apply the old wallpapers back
+        innerService.applyOldWallpapers();
+
+        socket.connected = false;
+        mpvProc.running = false;
+    }
+
+    function sendCommandToMPV(command: string) {
+        socket.connected = true;
+        socket.path = mpvSocket;
+        socket.write(`${command}\n`);
+        socket.flush();
+    }
+
+
+    /***************************
+    * EVENTS
+    ***************************/
+    onActiveChanged: {
+        if(root.active && !mpvProc.running && root.currentWallpaper != "") {
+            Logger.d("mpvpaper", "Turning mpvpaper on.");
+
+            activateMpvpaper();
+
+            thumbnails.startColorGen();
+        } else if(!root.active) {
+            Logger.d("mpvpaper", "Turning mpvpaper off.");
+
+            deactivateMpvpaper();
+        }
+    }
+
+    onCurrentWallpaperChanged: {
+        Logger.d("mpvpaper", "Current wallpaper changed from mpvpaper");
+
+        if (!root.active)
+            return;
+
+        if (root.currentWallpaper != "") {
+            Logger.d("mpvpaper", "Changing current wallpaper:", root.currentWallpaper);
+
+            if(mpvProc.running) {
+                // If mpvpaper is already running
+                sendCommandToMPV(`loadfile "${root.currentWallpaper}"`);
+            } else {
+                // Start mpvpaper
+                activateMpvpaper();
+            }
+
+            thumbnails.startColorGen();
+        } else if(mpvProc.running) {
+            Logger.d("mpvpaper", "Current wallpaper is empty, turning mpvpaper off.");
+
+            deactivateMpvpaper();
+        }
+    }
+
+    onIsMutedChanged: {
+        if (!mpvProc.running) {
+            Logger.d("mpvpaper", "No wallpaper is running!");
+            return;
+        }
+
+        // This sets the audio id to null or to auto
+        if (isMuted) {
+            sendCommandToMPV("no-osd set aid no");
+        } else {
+            sendCommandToMPV("no-osd set aid auto");
+        }
+    }
+
+    onIsPlayingChanged: {
+        if (!mpvProc.running) {
+            Logger.d("mpvpaper", "No wallpaper is running!");
+            return;
+        }
+
+        // Pause or unpause the video
+        if(isPlaying) {
+            sendCommandToMPV("set pause no");
+        } else {
+            sendCommandToMPV("set pause yes");
+        }
+    }
+
+    onVolumeChanged: {
+        if(!mpvProc.running) {
+            Logger.d("mpvpaper", "No wallpaper is running!");
+            return;
+        }
+
+        // Mpv has volume from 0 to 100 instead of 0 to 1
+        const v = Math.min(Math.max(volume, 0), 100);
+
+        sendCommandToMPV(`no-osd set volume ${v}`)
+
+        // Clamp the volume
+        if(v != volume) {
+            pluginApi.pluginSettings.volume = v;
+            pluginApi.saveSettings();
+        }
+    }
+
+    /***************************
+    * COMPONENTS
+    ***************************/
+    Process {
+        id: mpvProc
+    }
+
+    Socket {
+        id: socket
+        path: root.mpvSocket
+    }
+}
