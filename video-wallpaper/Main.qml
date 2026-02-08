@@ -14,8 +14,9 @@ Item {
     /***************************
     * PROPERTIES
     ***************************/
-    readonly property string currentWallpaper: pluginApi.pluginSettings.currentWallpaper || ""
-    readonly property string wallpapersFolder: pluginApi.pluginSettings.wallpapersFolder || "~/Pictures/Wallpapers"
+    readonly property string    activeBackend:      pluginApi.pluginSettings.activeBackend      || "qt6-multimedia"
+    readonly property string    currentWallpaper:   pluginApi.pluginSettings.currentWallpaper   || ""
+    readonly property string    wallpapersFolder:   pluginApi.pluginSettings.wallpapersFolder   || "~/Pictures/Wallpapers"
 
     readonly property string thumbCacheFolderPath: ImageCacheService.wpThumbDir + "video-wallpaper"
 
@@ -89,9 +90,38 @@ Item {
     /***************************
     * COMPONENTS
     ***************************/
-    VideoWallpaper {
-        id: wallpaper
-        pluginApi: root.pluginApi
+    Loader {
+        id: wallpaperLoader
+        active: true
+        
+        sourceComponent: {
+            switch (root.activeBackend) {
+                case "mpvpaper":
+                    return mpvpaper;
+                    break;
+                case "qt6-multimedia":
+                    return qtmultimedia;
+                    break;
+                default:
+                    Logger.e("video-wallpaper", "No active backend.");
+            }
+        }
+    }
+
+    Component {
+        id: qtmultimedia
+
+        VideoWallpaper {
+            pluginApi: root.pluginApi
+        }
+    }
+
+    Component {
+        id: mpvpaper
+
+        Mpvpaper {
+            pluginApi: root.pluginApi
+        }
     }
 
     Thumbnails {
@@ -142,5 +172,9 @@ Item {
     IPC {
         id: ipcHandler
         pluginApi: root.pluginApi
+
+        random: root.random
+        clear: root.clear
+        setWallpaper: root.setWallpaper
     }
 }
