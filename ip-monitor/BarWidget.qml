@@ -82,6 +82,8 @@ Item {
 
     onStarted: {
       fetchState = "loading";
+      // Update service cache with loading state
+      Local.IpMonitorService.updateCache(ipData, "loading", lastFetchTime);
       Logger.d("IpMonitor", "BarWidget fetching IP info...");
     }
 
@@ -97,7 +99,9 @@ Item {
             currentIp = data.ip;
             fetchState = "success";
             lastFetchTime = Date.now();
-            Logger.d("IpMonitor", "BarWidget IP fetched:", currentIp);
+            // Update service cache
+            Local.IpMonitorService.updateCache(data, "success", lastFetchTime);
+            Logger.d("IpMonitor", "BarWidget IP fetched and cached:", currentIp);
           } else {
             throw new Error("No IP field in response");
           }
@@ -106,12 +110,16 @@ Item {
           currentIp = "n/a";
           ipData = null;
           fetchState = "error";
+          // Update service cache with error state
+          Local.IpMonitorService.updateCache(null, "error", Date.now());
         }
       } else {
         Logger.e("IpMonitor", "BarWidget curl failed:", exitCode);
         currentIp = "n/a";
         ipData = null;
         fetchState = "error";
+        // Update service cache with error state
+        Local.IpMonitorService.updateCache(null, "error", Date.now());
       }
     }
   }
@@ -162,9 +170,7 @@ Item {
     }
 
     onClicked: {
-      // Refresh IP on click
-      fetchIp();
-      // Also open panel
+      // Open panel (it will use cached data)
       if (pluginApi) {
         pluginApi.openPanel(root.screen, root);
       }

@@ -4,6 +4,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
+import "." as Local
 
 // Panel Component
 Item {
@@ -20,70 +21,22 @@ Item {
 
   readonly property bool allowAttach: true
 
-  // IP data state - managed directly in panel
-  property var ipData: null
-  property string fetchState: "idle" // idle, loading, success, error
+  // IP data state - read from service cache
+  readonly property var ipData: Local.IpMonitorService.cachedIpData
+  readonly property string fetchState: Local.IpMonitorService.cachedFetchState
 
   anchors.fill: parent
 
   Component.onCompleted: {
     if (pluginApi) {
-      Logger.i("IpMonitor", "Panel initialized, fetching IP...");
-    }
-    // Fetch IP when panel opens
-    Qt.callLater(() => fetchIp());
-  }
-
-  // curl process for fetching IP info
-  Process {
-    id: ipFetchProcess
-    running: false
-    command: ["curl", "-s", "-m", "10", "https://ipinfo.io"]
-    stdout: StdioCollector {
-      id: stdoutCollector
-    }
-    stderr: StdioCollector {
-      id: stderrCollector
-    }
-
-    onStarted: {
-      fetchState = "loading";
-      Logger.i("IpMonitor", "Panel fetching IP info...");
-    }
-
-    onExited: function(exitCode, exitStatus) {
-      var output = stdoutCollector.text;
-      Logger.i("IpMonitor", "Panel process exited:", exitCode, "length:", output.length);
-
-      if (exitCode === 0 && output.length > 0) {
-        try {
-          var data = JSON.parse(output);
-          if (data.ip) {
-            ipData = data;
-            fetchState = "success";
-            Logger.d("IpMonitor", "Panel IP fetched:", data.ip);
-          } else {
-            throw new Error("No IP field in response");
-          }
-        } catch (e) {
-          Logger.e("IpMonitor", "Panel parse error:", e.message);
-          ipData = null;
-          fetchState = "error";
-        }
-      } else {
-        Logger.e("IpMonitor", "Panel curl failed:", exitCode);
-        ipData = null;
-        fetchState = "error";
-      }
+      Logger.i("IpMonitor", "Panel initialized with cached data");
     }
   }
 
-  function fetchIp() {
-    if (!ipFetchProcess.running) {
-      ipFetchProcess.running = true;
-    } else {
-      Logger.d("IpMonitor", "Panel fetch already in progress");
-    }
+  // Trigger refresh in BarWidget via service
+  function refreshIp() {
+    Logger.i("IpMonitor", "Panel triggering refresh via service");
+    Local.IpMonitorService.triggerRefresh();
   }
 
   Rectangle {
@@ -116,7 +69,7 @@ Item {
           icon: "refresh"
           enabled: root.fetchState !== "loading"
           onClicked: {
-            root.fetchIp();
+            root.refreshIp();
           }
         }
       }
