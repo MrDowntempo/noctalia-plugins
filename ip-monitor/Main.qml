@@ -17,7 +17,7 @@ Item {
     target: "plugin:ip-monitor"
     
     function refreshIp() {
-      Logger.i("IpMonitor", "IPC refreshIp called - triggering widget refresh");
+      Logger.d("IpMonitor", "IPC refreshIp called - triggering widget refresh");
       Local.IpMonitorService.triggerRefresh();
       ToastService.showNotice("Refreshing IP info...");
     }

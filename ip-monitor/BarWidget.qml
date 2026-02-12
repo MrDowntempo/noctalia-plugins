@@ -54,7 +54,7 @@ Item {
   implicitHeight: pill.height
 
   Component.onCompleted: {
-    Logger.i("IpMonitor", "BarWidget loaded, fetching IP...");
+    Logger.d("IpMonitor", "BarWidget loaded, fetching IP...");
     Qt.callLater(() => fetchIp());
   }
 
@@ -63,7 +63,7 @@ Item {
     target: Local.IpMonitorService
     
     function onRefreshTriggerChanged() {
-      Logger.i("IpMonitor", "BarWidget received refresh trigger from IPC, value:", Local.IpMonitorService.refreshTrigger);
+      Logger.d("IpMonitor", "BarWidget received refresh trigger from IPC, value:", Local.IpMonitorService.refreshTrigger);
       fetchIp();
     }
   }
@@ -82,12 +82,12 @@ Item {
 
     onStarted: {
       fetchState = "loading";
-      Logger.i("IpMonitor", "BarWidget fetching IP info...");
+      Logger.d("IpMonitor", "BarWidget fetching IP info...");
     }
 
     onExited: function(exitCode, exitStatus) {
       var output = stdoutCollector.text;
-      Logger.i("IpMonitor", "BarWidget process exited:", exitCode, "length:", output.length);
+      Logger.d("IpMonitor", "BarWidget process exited:", exitCode, "length:", output.length);
 
       if (exitCode === 0 && output.length > 0) {
         try {
@@ -97,7 +97,7 @@ Item {
             currentIp = data.ip;
             fetchState = "success";
             lastFetchTime = Date.now();
-            Logger.i("IpMonitor", "BarWidget IP fetched:", currentIp);
+            Logger.d("IpMonitor", "BarWidget IP fetched:", currentIp);
           } else {
             throw new Error("No IP field in response");
           }
@@ -129,7 +129,7 @@ Item {
     if (!ipFetchProcess.running) {
       ipFetchProcess.running = true;
     } else {
-      Logger.i("IpMonitor", "BarWidget fetch already in progress");
+      Logger.d("IpMonitor", "BarWidget fetch already in progress");
     }
   }
 
@@ -203,7 +203,7 @@ Item {
         if (currentIp && currentIp !== "n/a") {
           Quickshell.execDetached(["sh", "-c", `printf '%s' '${currentIp}' | wl-copy`]);
           ToastService.showNotice("IP copied to clipboard: " + currentIp);
-          Logger.i("IpMonitor", "Copied IP to clipboard:", currentIp);
+          Logger.d("IpMonitor", "Copied IP to clipboard:", currentIp);
         } else {
           ToastService.showNotice("No IP to copy");
         }

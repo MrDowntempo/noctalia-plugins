@@ -29,15 +29,15 @@ ColumnLayout {
 
     // Appearance section
     NText {
-      text: "Appearance"
+      text: pluginApi?.tr("settings.appearance.title")
       font.pointSize: Style.fontSizeM * Style.uiScaleRatio
       font.weight: Font.Medium
       color: Color.mOnSurface
     }
 
     NComboBox {
-      label: "Icon Color"
-      description: "Color for the icon when IP is successfully fetched"
+      label: pluginApi?.tr("settings.iconColor.label")
+      description: pluginApi?.tr("settings.iconColor.desc")
       model: Color.colorKeyModel
       currentKey: root.valueIconColor
       onSelected: key => root.valueIconColor = key
@@ -45,43 +45,106 @@ ColumnLayout {
 
     // State Icons section
     NText {
-      text: "State Icons"
+      text: pluginApi?.tr("settings.stateIcons.title")
       font.pointSize: Style.fontSizeM * Style.uiScaleRatio
       font.weight: Font.Medium
       color: Color.mOnSurface
       Layout.topMargin: Style.marginM
     }
 
-    NTextInput {
-      Layout.fillWidth: true
-      label: "Success Icon"
-      description: "Icon name to show when IP is successfully fetched"
-      placeholderText: "hierarchy-2"
-      text: root.valueSuccessIcon
-      onTextChanged: root.valueSuccessIcon = text
+    RowLayout {
+      spacing: Style.marginM
+
+      NLabel {
+        label: pluginApi?.tr("settings.successIcon.label")
+        description: pluginApi?.tr("settings.successIcon.desc")
+      }
+
+      NIcon {
+        Layout.alignment: Qt.AlignVCenter
+        icon: valueSuccessIcon
+        pointSize: Style.fontSizeXXL * 1.5
+        visible: valueSuccessIcon !== ""
+      }
+
+      NButton {
+        text: pluginApi?.tr("settings.browseIcons")
+        onClicked: successIconPicker.open()
+      }
     }
 
-    NTextInput {
-      Layout.fillWidth: true
-      label: "Error Icon"
-      description: "Icon name to show when IP fetch fails"
-      placeholderText: "alert-circle"
-      text: root.valueErrorIcon
-      onTextChanged: root.valueErrorIcon = text
+    NIconPicker {
+      id: successIconPicker
+      initialIcon: valueSuccessIcon
+      onIconSelected: iconName => {
+        valueSuccessIcon = iconName;
+        settingsChanged(saveSettings());
+      }
     }
 
-    NTextInput {
-      Layout.fillWidth: true
-      label: "Loading Icon"
-      description: "Icon name to show while fetching IP"
-      placeholderText: "loader"
-      text: root.valueLoadingIcon
-      onTextChanged: root.valueLoadingIcon = text
+    RowLayout {
+      spacing: Style.marginM
+
+      NLabel {
+        label: pluginApi?.tr("settings.errorIcon.label")
+        description: pluginApi?.tr("settings.errorIcon.desc")
+      }
+
+      NIcon {
+        Layout.alignment: Qt.AlignVCenter
+        icon: valueErrorIcon
+        pointSize: Style.fontSizeXXL * 1.5
+        visible: valueErrorIcon !== ""
+      }
+
+      NButton {
+        text: pluginApi?.tr("settings.browseIcons")
+        onClicked: errorIconPicker.open()
+      }
+    }
+
+    NIconPicker {
+      id: errorIconPicker
+      initialIcon: valueErrorIcon
+      onIconSelected: iconName => {
+        valueErrorIcon = iconName;
+        settingsChanged(saveSettings());
+      }
+    }
+
+    RowLayout {
+      spacing: Style.marginM
+
+      NLabel {
+        label: pluginApi?.tr("settings.loadingIcon.label")
+        description: pluginApi?.tr("settings.loadingIcon.desc")
+      }
+
+      NIcon {
+        Layout.alignment: Qt.AlignVCenter
+        icon: valueLoadingIcon
+        pointSize: Style.fontSizeXXL * 1.5
+        visible: valueLoadingIcon !== ""
+      }
+
+      NButton {
+        text: pluginApi?.tr("settings.browseIcons")
+        onClicked: loadingIconPicker.open()
+      }
+    }
+
+    NIconPicker {
+      id: loadingIconPicker
+      initialIcon: valueLoadingIcon
+      onIconSelected: iconName => {
+        valueLoadingIcon = iconName;
+        settingsChanged(saveSettings());
+      }
     }
 
     // Behavior section
     NText {
-      text: "Behavior"
+      text: pluginApi?.tr("settings.behavior.title")
       font.pointSize: Style.fontSizeM * Style.uiScaleRatio
       font.weight: Font.Medium
       color: Color.mOnSurface
@@ -90,9 +153,9 @@ ColumnLayout {
 
     NTextInput {
       Layout.fillWidth: true
-      label: "Auto-refresh Interval (seconds)"
-      description: "How often to automatically refresh IP info. Set to 0 to disable auto-refresh."
-      placeholderText: "300"
+      label: pluginApi?.tr("settings.refreshInterval.label")
+      description: pluginApi?.tr("settings.refreshInterval.desc")
+      placeholderText: pluginApi?.tr("settings.refreshInterval.placeholder")
       text: root.valueRefreshInterval.toString()
       onTextChanged: {
         var val = parseInt(text);
@@ -103,6 +166,7 @@ ColumnLayout {
     }
   }
 
+  signal settingsChanged(var settings)
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("IpMonitor", "Cannot save settings: pluginApi is null");

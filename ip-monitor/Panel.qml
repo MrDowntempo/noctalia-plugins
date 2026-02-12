@@ -61,7 +61,7 @@ Item {
           if (data.ip) {
             ipData = data;
             fetchState = "success";
-            Logger.i("IpMonitor", "Panel IP fetched:", data.ip);
+            Logger.d("IpMonitor", "Panel IP fetched:", data.ip);
           } else {
             throw new Error("No IP field in response");
           }
@@ -82,7 +82,7 @@ Item {
     if (!ipFetchProcess.running) {
       ipFetchProcess.running = true;
     } else {
-      Logger.i("IpMonitor", "Panel fetch already in progress");
+      Logger.d("IpMonitor", "Panel fetch already in progress");
     }
   }
 
