@@ -30,9 +30,6 @@
 	"context": {
 		"connect": "Connecter",
 		"disconnect": "Déconnecter",
-		"refresh": "Actualiser le statut",
-		"not-installed": "NetBird n'est pas installé",
-		"settings": "Paramètres",
 		"copy-ip": "Copier l'IP",
 		"ssh": "SSH vers l'hôte",
 		"ping": "Ping l'hôte"
@@ -53,15 +50,9 @@
 		"title": "Réseau NetBird",
 		"peers": "pairs",
 		"not-connected": "Non connecté",
-		"online": "En ligne",
-		"offline": "Hors ligne",
 		"no-peers": "Aucun pair connecté",
 		"admin-console": "Console d'administration",
 		"management": "Management",
-		"signal": "Signal",
-		"terminal-warning": {
-			"title": "Terminal non configuré",
-			"message": "Définissez une commande de terminal dans les paramètres pour activer SSH et ping"
-		}
+		"signal": "Signal"
 	}
 }
