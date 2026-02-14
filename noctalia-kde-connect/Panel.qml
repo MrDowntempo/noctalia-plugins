@@ -153,7 +153,8 @@ Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
         active: true
-        sourceComponent: (KDEConnect.mainDevice !== null &&  KDEConnect.mainDevice.paired) ? deviceConnectedCard    :
+        sourceComponent: (!KDEConnect.daemonAvailable)                                     ? daemonNotRunningCard   :
+                         (KDEConnect.mainDevice !== null &&  KDEConnect.mainDevice.paired) ? deviceConnectedCard    :
                          (KDEConnect.mainDevice !== null && !KDEConnect.mainDevice.paired) ? noDevicePairedCard     :
                          (KDEConnect.devices.length === 0)                                 ? noDevicesAvailableCard :
                          ""
@@ -411,7 +412,7 @@ Item {
                 spacing: Style.marginM
 
                 NButton {
-                  text: "Pair with Device"
+                  text: pluginApi?.tr("panel.pair")
                   Layout.alignment: Qt.AlignHCenter
                   enabled: !KDEConnect.mainDevice.pairRequested
                   onClicked: {
@@ -484,10 +485,68 @@ Item {
             Item {}
 
             NText {
-              text: "No device running KDE Connect found"
+              text: pluginApi?.tr("panel.kdeconnect-error.no-devices")
               pointSize: Style.fontSizeL
               color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignCenter
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              wrapMode: Text.WordWrap
+            }
+
+            Item {
+              Layout.fillHeight: true
+            }
+          }
+        }
+      }
+
+      Component {
+        id: daemonNotRunningCard
+
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          color: Color.mSurfaceVariant
+          radius: Style.radiusM
+
+          ColumnLayout {
+            id: emptyState
+            anchors.fill: parent
+            anchors.margins: Style.marginM
+            spacing: Style.marginM
+
+            Item {
+              Layout.fillHeight: true
+            }
+
+            NIcon {
+              icon: "exclamation-circle"
+              pointSize: 48
+              color: Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
+            }
+
+            Item {}
+
+            NText {
+              text: pluginApi?.tr("panel.kdeconnect-error.unavailable-title")
+              pointSize: Style.fontSizeL
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignCenter
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+            }
+
+            NText {
+              text: pluginApi?.tr("panel.kdeconnect-error.unavailable-desc")
+              pointSize: Style.fontSizeS
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignCenter
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              wrapMode: Text.WordWrap
+              Layout.fillWidth: true
             }
 
             Item {
