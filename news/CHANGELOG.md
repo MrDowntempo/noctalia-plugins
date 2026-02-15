@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-02-15
+
+### Fixed
+- Fixed panel not opening on left-click (use pluginApi.openPanel instead of PanelService)
+- Replaced NIcon with emojis in Panel.qml for better compatibility
+- Added data syncing between BarWidget and Panel
+- Removed icon from "Open Article" button (not needed)
+
 ## [1.1.1] - 2026-02-15
 
 ### Fixed

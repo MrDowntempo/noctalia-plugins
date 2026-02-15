@@ -78,7 +78,28 @@ Item {
       console.log("[News Plugin] PluginApi loaded, API key:", apiKey ? "configured" : "not configured");
       Qt.callLater(fetchNews);
     }
+    // Sync data to panel when pluginApi is available
+    if (pluginApi && pluginApi.panelInstance) {
+      syncToPanel();
+    }
   }
+
+  // Sync data to panel
+  function syncToPanel() {
+    if (pluginApi && pluginApi.panelInstance) {
+      pluginApi.panelInstance.newsData = root.newsData;
+      pluginApi.panelInstance.errorMessage = root.errorMessage;
+      pluginApi.panelInstance.isLoading = root.isLoading;
+    }
+  }
+
+  // Sync to panel when news data changes
+  onNewsDataChanged: {
+    updateAllNewsText();
+    syncToPanel();
+  }
+  onErrorMessageChanged: syncToPanel()
+  onIsLoadingChanged: syncToPanel()
 
   // Fetch news when API key becomes available
   onApiKeyChanged: {
@@ -103,7 +124,12 @@ Item {
     allNewsText = combined
   }
 
-  onNewsDataChanged: updateAllNewsText()
+  onNewsDataChanged: {
+    updateAllNewsText();
+    syncToPanel();
+  }
+  onErrorMessageChanged: syncToPanel()
+  onIsLoadingChanged: syncToPanel()
 
   // Fetch news
   function fetchNews() {
@@ -302,11 +328,8 @@ Item {
     onClicked: (mouse) => {
       if (mouse.button === Qt.LeftButton) {
         // Open panel
-        if (pluginApi && pluginApi.panelInstance) {
-          pluginApi.panelInstance.newsData = root.newsData;
-          pluginApi.panelInstance.errorMessage = root.errorMessage;
-          pluginApi.panelInstance.isLoading = root.isLoading;
-          PanelService.openFloatingPanel(pluginApi.panelInstance);
+        if (pluginApi) {
+          pluginApi.openPanel(root.screen, root);
         }
       } else if (mouse.button === Qt.RightButton) {
         // Open settings on right click

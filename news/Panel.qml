@@ -57,8 +57,8 @@ Item {
               Layout.fillWidth: true
             }
 
-            NIconButton {
-              icon: "close"
+            NIcon {
+              icon: "x"
               tooltipText: "Close"
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: PanelService.closeFloatingPanel()
@@ -89,9 +89,9 @@ Item {
             anchors.margins: Style.marginM
             spacing: Style.marginS
 
-            NIcon {
-              icon: "alert-triangle"
-              pointSize: Style.fontSizeL
+            Text {
+              text: "⚠️"
+              font.pointSize: Style.fontSizeL
               color: Color.mError
             }
 
@@ -283,9 +283,6 @@ Item {
                     NButton {
                       visible: modelData.url && modelData.url.length > 0
                       text: "Open Article"
-                      icon: "external-link"
-                      Layout.alignment: Qt.AlignRight
-                      Layout.topMargin: Style.marginXXS
                       onClicked: {
                         Qt.openUrlExternally(modelData.url)
                       }
