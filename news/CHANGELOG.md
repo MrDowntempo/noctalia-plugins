@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-02-15
+
+### Added
+- News panel that displays full headlines with descriptions
+- Click bar widget to open detailed news panel
+- Right-click bar widget to open settings
+- Panel shows article source, publish time, and "Open Article" buttons
+- Beautiful scrollable list with numbered badges
+- Loading, empty, and error states in panel
+
+### Changed
+- Changed click behavior: left-click opens panel, right-click opens settings
+- Updated tooltip to reflect new interaction
+
 ## [1.0.2] - 2026-02-15
 
 ### Fixed

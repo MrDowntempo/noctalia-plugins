@@ -281,18 +281,29 @@ Item {
     anchors.fill: parent
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    acceptedButtons: Qt.LeftButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-    onClicked: {
-      if (pluginApi) {
-        BarService.openPluginSettings(root.screen, pluginApi.manifest);
+    onClicked: (mouse) => {
+      if (mouse.button === Qt.LeftButton) {
+        // Open panel
+        if (pluginApi && pluginApi.panelInstance) {
+          pluginApi.panelInstance.newsData = root.newsData;
+          pluginApi.panelInstance.errorMessage = root.errorMessage;
+          pluginApi.panelInstance.isLoading = root.isLoading;
+          PanelService.openFloatingPanel(pluginApi.panelInstance);
+        }
+      } else if (mouse.button === Qt.RightButton) {
+        // Open settings on right click
+        if (pluginApi) {
+          BarService.openPluginSettings(root.screen, pluginApi.manifest);
+        }
       }
     }
 
     onEntered: {
       var tooltip = newsData.length > 0 
-        ? newsData.length + " headlines\nClick to configure"
-        : "Click to configure news";
+        ? newsData.length + " headlines\nLeft-click to view • Right-click for settings"
+        : "Left-click to view • Right-click for settings";
       TooltipService.show(root, tooltip, BarService.getTooltipDirection());
     }
 
