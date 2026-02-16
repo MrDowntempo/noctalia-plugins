@@ -263,6 +263,24 @@
       "lastUpdated": "2026-02-10T10:12:36-05:00"
     },
     {
+      "id": "kde-connect",
+      "name": "KDE Connect",
+      "version": "1.0.0",
+      "official": false,
+      "author": "WerWolv",
+      "description": "A Plugin integrating your mobile devices into a panel using KDEConnect",
+      "repository": "https://github.com/WerWolv/noctalia-kde-connect",
+      "minNoctaliaVersion": "4.4.0",
+      "license": "GPLv2",
+      "tags": [
+        "Bar",
+        "Panel",
+        "Utility",
+        "System"
+      ],
+      "lastUpdated": "2026-02-14T21:37:13+01:00"
+    },
+    {
       "id": "keybind-cheatsheet",
       "name": "Keybind Cheatsheet",
       "version": "3.2.2",
