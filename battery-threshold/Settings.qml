@@ -14,8 +14,16 @@ ColumnLayout {
 
     spacing: Style.marginL
 
+    NText {
+        visible: !service.isAvailable
+        text: "No configurable batteries are available on this system"
+        pointSize: Style.fontSizeM
+        color: Color.mOnSurfaceVariant
+    }
+
     NComboBox {
         Layout.fillWidth: true
+        visible: service.isAvailable
         label: pluginApi?.tr("settings.battery-device") || "Battery Device"
         description: pluginApi?.tr("settings.battery-device-desc") || "Battery to configure threshold for"
 
