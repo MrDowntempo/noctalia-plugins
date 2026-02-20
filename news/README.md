@@ -27,6 +27,7 @@ Get your free API key from [NewsAPI.org](https://newsapi.org/register). The free
 ### Settings
 
 - **Country/Region**: Select region for news (16 options with auto-language detection)
+  - *Note: NewsAPI free tier only supports US for true country-specific top headlines. Other regions use language-based filtering.*
 - **Language Override**: Manually override language (14 languages available)
 - **Category**: Filter by category (General, Business, Technology, Sports, etc.)
 - **Refresh Interval**: How often to fetch new headlines (5-1440 minutes)
@@ -44,10 +45,11 @@ Get your free API key from [NewsAPI.org](https://newsapi.org/register). The free
 
 ## Limitations
 
-- Free NewsAPI tier limited to 100 requests/day
-- Uses `/everything` endpoint with language filtering for better international support
+- **Free NewsAPI tier limited to 100 requests/day**
+- **Country-specific filtering**: Only US is fully supported on free tier for country-specific "top headlines". Other regions use language-based filtering which provides news in that language but not strictly from that country
 - News freshness depends on your refresh interval setting
 - Requires internet connection
+- For true country-specific filtering beyond US, a paid NewsAPI plan is required
 
 ## License
 

@@ -53,7 +53,7 @@ ColumnLayout {
 
   NComboBox {
     label: "Country/Region"
-    description: "Select region for news (automatically sets language)"
+    description: "Note: NewsAPI free tier only supports US for country-specific top headlines. Other regions use language-based filtering instead."
     minimumWidth: 200
     model: [
       { "key": "us", "name": "United States (English)" },

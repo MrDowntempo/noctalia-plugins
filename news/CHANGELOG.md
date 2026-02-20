@@ -16,10 +16,16 @@ All notable changes to this project will be documented in this file.
 - Language parameter support for better international news
 - Country-to-language mapping for automatic language detection
 - Search query optimization based on selected category
+- Clear documentation about NewsAPI free tier limitations
 
 ### Fixed
 - International news now works properly on free tier (was limited to US only)
 - Better news relevance for non-US countries
+
+### Note
+- NewsAPI free tier only supports US for true country-specific top headlines
+- Other regions use language-based filtering which provides news in that language
+- For true country-specific filtering, a paid NewsAPI plan is required
 
 ## [1.1.9] - 2026-02-20
 
