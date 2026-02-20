@@ -248,6 +248,21 @@
       "lastUpdated": "2026-02-17T15:50:12+01:00"
     },
     {
+      "id": "ip-monitor",
+      "name": "IP Monitor",
+      "version": "0.0.1",
+      "official": false,
+      "author": "deepalpha",
+      "description": "Plugin showing current external IP",
+      "repository": "https://github.com/noctalia-dev/noctalia-plugins",
+      "minNoctaliaVersion": "4.4.3",
+      "license": "MIT",
+      "tags": [
+        "Development"
+      ],
+      "lastUpdated": "2026-02-12T08:50:25+01:00"
+    },
+    {
       "id": "kagi-quick-search",
       "name": "Kagi Quick Search",
       "version": "1.0.1",
