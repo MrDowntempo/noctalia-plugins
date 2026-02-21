@@ -13,7 +13,8 @@
     "barWidget": "BarWidget.qml",
     "desktopWidget": "DesktopWidget.qml",
     "panel": "Panel.qml",
-    "settings": "Settings.qml"
+    "settings": "Settings.qml",
+    "controlCenterWidget": "ControlCenterWidget.qml"
   },
   "dependencies": {
     "plugins": []
