@@ -445,6 +445,24 @@
       "lastUpdated": "2026-02-18T11:09:59+01:00"
     },
     {
+      "id": "news",
+      "name": "News Bar",
+      "version": "1.1.9",
+      "official": false,
+      "author": "Noctalia",
+      "description": "Display scrolling news headlines from various sources using NewsAPI.org",
+      "repository": "https://github.com/noctalia-dev/noctalia-plugins",
+      "minNoctaliaVersion": "3.6.0",
+      "license": "MIT",
+      "tags": [
+        "Bar",
+        "Panel",
+        "News",
+        "Network"
+      ],
+      "lastUpdated": "2026-02-20T14:35:00Z"
+    },
+    {
       "id": "niri-overview-launcher",
       "name": "Niri Overview Launcher",
       "version": "1.0.0",
