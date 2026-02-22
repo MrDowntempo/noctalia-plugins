@@ -132,7 +132,7 @@ This allows the community to share and use plugins outside the main registry.
 node .github/workflows/update-registry.js
 ```
 
-Do NOT commit registry.json in your Pull Requests.
+Do NOT commit registry.json in your Pull Requests as it is automatically regenerated.
 
 ## License
 
