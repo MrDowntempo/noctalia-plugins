@@ -70,7 +70,7 @@
     {
       "id": "calibre-provider",
       "name": "Calibre Provider",
-      "version": "1.1.2",
+      "version": "1.2.0",
       "official": false,
       "author": "Krendil",
       "description": "Search for books in your Calibre library",
@@ -80,7 +80,7 @@
       "tags": [
         "Launcher"
       ],
-      "lastUpdated": "2026-02-10T10:12:36-05:00"
+      "lastUpdated": "2026-02-23T12:55:52+10:00"
     },
     {
       "id": "catwalk",
