@@ -1,8 +1,8 @@
 {
   "id": "color-scheme-creator",
   "name": "Color Scheme Creator",
-  "version": "1.0.0",
-  "minNoctaliaVersion": "4.5.0",
+  "version": "1.0.1",
+  "minNoctaliaVersion": "4.5.1",
   "author": "Noctalia Team",
   "official": true,
   "license": "MIT",
