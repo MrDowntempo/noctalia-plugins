@@ -121,6 +121,22 @@
       "lastUpdated": "2026-02-08T21:20:48+01:00"
     },
     {
+      "id": "color-scheme-creator",
+      "name": "Color Scheme Creator",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Noctalia Team",
+      "description": "Create and manage custom predefined color schemes with a visual color editor.",
+      "repository": "https://github.com/noctalia-dev/noctalia-plugins",
+      "minNoctaliaVersion": "4.5.0",
+      "license": "MIT",
+      "tags": [
+        "Theming",
+        "Colors"
+      ],
+      "lastUpdated": "2026-02-23T20:40:15-05:00"
+    },
+    {
       "id": "currency-exchange",
       "name": "Currency Exchange",
       "version": "1.0.2",
