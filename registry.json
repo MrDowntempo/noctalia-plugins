@@ -38,7 +38,7 @@
     {
       "id": "battery-actions",
       "name": "Battery Actions",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "official": false,
       "author": "itscrystalline",
       "description": "A plugin that allows you to run custom actions when battery state changes.",
@@ -48,7 +48,7 @@
       "tags": [
         "System"
       ],
-      "lastUpdated": "2026-02-10T22:29:17+07:00"
+      "lastUpdated": "2026-02-26T19:55:06+01:00"
     },
     {
       "id": "battery-threshold",
